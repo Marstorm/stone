@@ -1,12 +1,17 @@
 #pragma once
 #include "basic_server.h"
 #include <string>
+#include <mutex>
 #include <memory>
+#include <future>
 #include "basic.h"
 class pin
 {
 private:
 	virtual_type m_data;
+	int m_writen = 0;
+	std::condition_variable m_data_cond;
+	std::mutex m_mutex;
 public:
 	void operator&=(pin const&) = delete;
 
@@ -46,6 +51,8 @@ public:
 	void run() override;
 private:
 	pin_array m_pins;
+	
+	
 };
 
 

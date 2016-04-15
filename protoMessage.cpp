@@ -13,20 +13,17 @@ using namespace google::protobuf;
 
 
 
-void deal(vector<virtual_type*> m_port) {// 0 == > 1
-	stone s;
-	s.set_message(s.message() + "a");
-	
-	test t;
-
-	t.code();
-	s.set_code(s.code() + t.code());
+void deal(vector<virtual_type> m_port) {// 0 == > 1
+	cout << "component:" << endl;
+	cout << m_port[0].cast<stone>().code() << endl;
+	cout << m_port[1].cast<stone>().code() << endl;
 }
 
 void print(stone & s)
 {
 	cout << "m:" << s.message() << ";code:" << s.code() << endl;
 }
+
 int main(int argc, char* argv[]) {
 	// Verify that the version of the library that we linked against is
 	// compatible with the version of the headers we compiled against.
@@ -42,10 +39,20 @@ int main(int argc, char* argv[]) {
 	thread port_run = thread(&port::run, &t);
 	t.Register(pins);
 	port_run.detach();
-	auto vs=p1->read();
-	cout << vs.cast<stone>().code() << endl;
-	vs = p2->read();
-	cout << vs.cast<stone>().code() << endl;
+	component com(deal, 2);
+	com.Register(pins);
+	thread com_run = thread(&component::run, &com);
+	com_run.detach();
+	while (true)
+	{
+		
+		auto vs = p1->read();
+		auto vs1 = p2->read();
+		cout << "main:" << endl;
+		cout << vs.cast<stone>().code() << endl;
+		cout << vs1.cast<stone>().code() << endl;
+	}
+	
 	
 	google::protobuf::ShutdownProtobufLibrary();
 	

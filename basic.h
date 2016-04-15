@@ -126,7 +126,20 @@ public:
 	bool is_empty() {
 		return policyPtr == nullptr;
 	}
-	
+	const char * get_type_name()
+	{
+		return policyPtr->get_id_name();
+	}
+	template<typename T>
+	bool is_typeof()
+	{
+		return strcmp(policyPtr->get_id_name(), typeid(T).name()) == 0;
+	}
+	template<typename T>
+	bool is_typeof(T& a)
+	{
+		return strcmp(policyPtr->get_id_name(), typeid(T).name()) == 0;
+	}
 	~virtual_type() {
 		
 	}
@@ -140,5 +153,20 @@ private:
 
 };
 
+/*
+void test_fun()
+{
+#define test_type(type) if(i.is_typeof<type>())\
+cout << #type<<":" << i.cast<type>() << std::endl;
+std::vector<virtual_type> any({ 1,1.2,std::string("什么都能放"),15,-100});
 
+for (auto i : any)
+{
+test_type(int);
+test_type(double);
+test_type(std::string);
+}
+
+}
+*/
 

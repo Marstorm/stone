@@ -1,17 +1,25 @@
 #include "pin.h"
 #include "proto/request.pb.h"
 #include <fstream>
-#include <future>
+
 using namespace std;
 //阻塞模式：先写后读。如果写完再写需等待读
 void pin::write(const virtual_type & data)
 {
+	std::unique_lock<std::mutex> lk(m_mutex);
+	m_data_cond.wait(lk, [&m = m_writen] {return m == 0; });
 	m_data = data;
+	m_writen = 1;
+	m_data_cond.notify_one();
 	
 }
 //读前等待写
 const virtual_type& pin::read()
 {
+	std::unique_lock<std::mutex> lk(m_mutex);
+	m_data_cond.wait(lk, [&m = m_writen] {return m == 1; });
+	m_writen = 0;
+	m_data_cond.notify_one();
 	return (m_data);
 }
 pin::pin()
