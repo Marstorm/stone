@@ -1,0 +1,9 @@
+#pragma once
+#include <thread>
+#include <mutex>
+#include <future>
+#include "proto\request.pb.h"
+#include "component.h"
+#include "stone_interface.h"
+#include "pin.h"
+#include "basic_server.h"

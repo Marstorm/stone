@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+message stone {
+  string message = 1;
+  sint32 code=2;
+}
+message test {
+  string message = 1;
+  sint32 code=2;
+  int32	 c=3;
+}
