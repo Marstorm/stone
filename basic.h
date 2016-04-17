@@ -109,6 +109,38 @@ public:
 		throw std::exception("nullptr");
 		return T();
 	}
+	template<typename T>
+	T try_cast()
+	{
+		if (is_typeof<T>()) {
+			if (policyPtr != nullptr)
+			{
+				assert(strcmp(typeid(T).name(), policyPtr->get_id_name()) == 0);//确保类型相同
+				return (static_cast<real_type<T>*>(policyPtr.get()))->get_value();
+			}
+		}
+		else
+		throw std::exception("nullptr");
+		else
+		{
+			throw std::exception("wrong type");
+		}
+		return T();
+	}
+	template<typename T>
+	bool  try_cast(T& ans)
+	{
+		if (is_typeof<T>()) {
+			if (policyPtr != nullptr)
+			{
+				assert(strcmp(typeid(T).name(), policyPtr->get_id_name()) == 0);//确保类型相同
+				ans = (static_cast<real_type<T>*>(policyPtr.get()))->get_value();
+				return true;
+			}
+		}
+		else
+			return false;
+	}
 	/*!
 	* \brief modify 修改内容
 	*/

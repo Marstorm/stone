@@ -31,12 +31,12 @@ pin::~pin()
 {
 }
 
-void port::Register(const pin_array & reg)
+void port::Register(const std::shared_ptr<pin_array> & reg)
 {
 	m_pins = reg;
 }
 
-port::port() :basic_server(vector<string>({"asd"}))
+port::port() :basic_server(vector<string>({"port"}))
 {
 }
 
@@ -62,13 +62,13 @@ void port::run()
 	while (std::cin >> a)
 	{
 		
-		i = ++i%m_pins.size();
+		i = ++i%m_pins->size();
 		stone s;
 		s.set_code(a);
 		s.set_message("shite!");
 		;
 		virtual_type m(s);
-		m_pins[i]->write((m));
+		(*m_pins)[i]->write((m));
 	}
 	
 }

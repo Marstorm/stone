@@ -23,17 +23,21 @@ void print(stone & s)
 {
 	cout << "m:" << s.message() << ";code:" << s.code() << endl;
 }
-
 int main(int argc, char* argv[]) {
 	// Verify that the version of the library that we linked against is
 	// compatible with the version of the headers we compiled against.
 	GOOGLE_PROTOBUF_VERIFY_VERSION;
-	
-	pin_array pins;
+	map<int,virtual_type> p;
+	tuple<int, double, string> m_tuple = {1, 1.0, string("1")};
+	p[0] = 2;
+	p[0].modify(2);
+	p[0].try_cast<int>(get<0>(m_tuple));
+	cout << "get<0>(m_tuple):" << get<0>(m_tuple);
+	shared_ptr<pin_array> pins=std::make_shared<pin_array>() ;
 	auto p1 = make_shared<pin>();
 	auto p2 = make_shared<pin>();
-	pins.add_port(p1);
-	pins.add_port(p2);
+	pins->add_port(p1);
+	pins->add_port(p2);
 	
 	port t;
 	thread port_run = thread(&port::run, &t);

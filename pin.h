@@ -13,7 +13,7 @@ private:
 	std::condition_variable m_data_cond;
 	std::mutex m_mutex;
 public:
-	void operator&=(pin const&) = delete;
+	//void operator&=(pin const&) = default;
 
 	void write(const virtual_type& data);
 	const virtual_type& read();//I want it return virtual_type.But virtual_type has some bug. 
@@ -45,12 +45,12 @@ class port :public basic_server
 {
 public:
 	void operator&=(port const&) = delete;
-	void Register(const pin_array& reg);
+	void Register(const std::shared_ptr<pin_array>& reg);
 	port();
 	~port();
 	void run() override;
 private:
-	pin_array m_pins;
+	std::shared_ptr<pin_array> m_pins;
 	
 	
 };
