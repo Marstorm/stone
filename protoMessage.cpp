@@ -18,47 +18,31 @@ void deal(vector<virtual_type> m_port) {// 0 == > 1
 	cout << m_port[0].cast<stone>().code() << endl;
 	cout << m_port[1].cast<stone>().code() << endl;
 }
-
 void print(stone & s)
 {
 	cout << "m:" << s.message() << ";code:" << s.code() << endl;
 }
+#include <Winsock2.h>
+#include "transport.h"
 int main(int argc, char* argv[]) {
 	// Verify that the version of the library that we linked against is
 	// compatible with the version of the headers we compiled against.
 	GOOGLE_PROTOBUF_VERIFY_VERSION;
-	map<int,virtual_type> p;
-	tuple<int, double, string> m_tuple = {1, 1.0, string("1")};
-	p[0] = 2;
-	p[0].modify(2);
-	p[0].try_cast<int>(get<0>(m_tuple));
-	cout << "get<0>(m_tuple):" << get<0>(m_tuple);
-	shared_ptr<pin_array> pins=std::make_shared<pin_array>() ;
-	auto p1 = make_shared<pin>();
-	auto p2 = make_shared<pin>();
-	pins->add_port(p1);
-	pins->add_port(p2);
-	
-	port t;
-	thread port_run = thread(&port::run, &t);
-	t.Register(pins);
-	port_run.detach();
-	component com(deal, 2);
-	com.Register(pins);
-	thread com_run = thread(&component::run, &com);
-	com_run.detach();
-	while (true)
+	transport_net::wVersionRequested = MAKEWORD(1, 1);
+	WSAStartup(transport_net::wVersionRequested, &transport_net::wsaData);
+
+	auto fun = [](vector<virtual_type> m_port) { cout<<"suc:"<<m_port[0].cast<string>(); };
+	component com(fun,2);
+	com.add_port(port(make_shared<transport_net>(), 1));
+	thread th(&component::run, &com);
+	transport_net p;
+	string str;
+	while (cin>>str)
 	{
-		
-		auto vs = p1->read();
-		auto vs1 = p2->read();
-		cout << "main:" << endl;
-		cout << vs.cast<stone>().code() << endl;
-		cout << vs1.cast<stone>().code() << endl;
+		p.write(str);
 	}
-	
-	
+
 	google::protobuf::ShutdownProtobufLibrary();
-	
+	WSACleanup();
 	return 0;
 }

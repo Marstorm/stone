@@ -1,6 +1,6 @@
 #include "component.h"
 
-
+#include <thread>
 
 component::component(deal_com_data fun, int s_buff)
 {
@@ -11,19 +11,21 @@ component::~component()
 {
 }
 
-void component::Register(const std::shared_ptr<pin_array>& reg)
-{
-	m_register = reg;
-}
+ 
 
 void component::run()
 {
 	while (true)
 	{
 		std::vector<virtual_type> buff;
-		for (int i = 0; i < m_register->size(); i++)
+		for (int i = 0; i < m_register.size(); i++)
 		{
-			buff.push_back((*m_register)[i]->read());
+			if (m_register[i].get_type() & 1)
+			{
+				string s;
+				(m_register)[i]->read(s);
+				buff.push_back(s);
+			}
 		}
 		m_buffs.push(buff);
 		//read message
@@ -31,10 +33,14 @@ void component::run()
 		buff = m_buffs.front();
 		m_buffs.pop();
 		//call
-		fun_callback(buff);
-
-		
+		std::thread t(fun_callback, buff);
+		t.detach();
 	}
 }
 
-inline const int & component::size() { return m_register->size(); }
+inline const int & component::size() { return m_register.size(); }
+
+void component::add_port(port & _p)
+{
+	m_register.push_back(_p);
+}

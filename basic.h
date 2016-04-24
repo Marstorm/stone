@@ -138,7 +138,7 @@ public:
 				return true;
 			}
 		}
-		else
+		
 			return false;
 	}
 	/*!
@@ -185,20 +185,16 @@ private:
 
 };
 
-/*
-void test_fun()
-{
-#define test_type(type) if(i.is_typeof<type>())\
-cout << #type<<":" << i.cast<type>() << std::endl;
-std::vector<virtual_type> any({ 1,1.2,std::string("什么都能放"),15,-100});
 
-for (auto i : any)
+class transit_type
 {
-test_type(int);
-test_type(double);
-test_type(std::string);
-}
-
-}
-*/
+public:
+	transit_type(virtual_type& _data);
+	~transit_type();
+	virtual string encoding()=0;
+	virtual string decoding()=0;
+protected:
+	virtual_type m_data;
+private:
+};
 

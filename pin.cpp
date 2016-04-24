@@ -31,47 +31,9 @@ pin::~pin()
 {
 }
 
-void port::Register(const std::shared_ptr<pin_array> & reg)
-{
-	m_pins = reg;
-}
 
-port::port() :basic_server(vector<string>({"port"}))
-{
-}
 
-port::~port()
-{
-}
 
-void port::run()
-{
-	bool suc;
-	ifstream file;
-	file.open("input.txt");
-	if (args.size())
-	{
-		file.open(args[0]);
-	}
-	else
-	{
-		
-	}
-	int i = 0;
-	int a;
-	while (std::cin >> a)
-	{
-		
-		i = ++i%m_pins->size();
-		stone s;
-		s.set_code(a);
-		s.set_message("shite!");
-		;
-		virtual_type m(s);
-		(*m_pins)[i]->write((m));
-	}
-	
-}
 
 pin_array::pin_array()
 {

@@ -41,19 +41,5 @@ private:
 
 };
 
-class port :public basic_server
-{
-public:
-	void operator&=(port const&) = delete;
-	void Register(const std::shared_ptr<pin_array>& reg);
-	port();
-	~port();
-	void run() override;
-private:
-	std::shared_ptr<pin_array> m_pins;
-	
-	
-};
-
 
 
