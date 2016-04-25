@@ -54,7 +54,7 @@ int transport_net::read(string & data)
 	int len = sizeof(SOCKADDR);
 	
 	SOCKET sockConn = accept(m_sockSrv, (SOCKADDR*)&addrClient, &len);
-	std::cout << "recv from:" << inet_ntoa( addrClient.sin_addr) << std::endl;
+	//std::cout << "recv from:" << inet_ntoa( addrClient.sin_addr) << std::endl;
 	char recvBuf[50];
 	recv(sockConn, recvBuf, 50, 0);
 	data = recvBuf;
@@ -72,13 +72,18 @@ int transport_net::write(string & const data)
 
 	int err;
 	auto t_sockSrv = socket(AF_INET, SOCK_STREAM, 0);
-
-	err=connect(t_sockSrv, (SOCKADDR*)&addrSrv, sizeof(SOCKADDR));
-	if(send(t_sockSrv, data.c_str(), 50, 0)!= WSANOTINITIALISED)
-		 err= WSAGetLastError();
-	else 
-		err=0;
-	return err;
+	
+	err = connect(t_sockSrv, (SOCKADDR*)&addrSrv, sizeof(SOCKADDR));
+	
+	
+	if (send(t_sockSrv, data.c_str(), 50, MSG_DONTROUTE) != WSANOTINITIALISED)
+	{
+		err = WSAGetLastError();
+	}
+	else
+		return 0;
+	
+	return 0;
 }
 
 void transport_net::change_port()
@@ -113,8 +118,9 @@ transport_net::~transport_net()
 }
 
 
-port::port(shared_ptr<transport> _transit, int _type):m_transitport(_transit),m_type(_type)
+port::port(shared_ptr<transport> _transit, int _type, shared_ptr<transit_type> _dtype):m_transitport(_transit),m_type(_type),m_data_type(_dtype)
 {
+
 }
 
 port::~port()

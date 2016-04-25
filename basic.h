@@ -191,10 +191,26 @@ class transit_type
 public:
 	transit_type(virtual_type& _data);
 	~transit_type();
-	virtual string encoding()=0;
-	virtual string decoding()=0;
-protected:
+	virtual string encoding() { return string(); }
+	virtual void decoding(const string& ){}
 	virtual_type m_data;
 private:
 };
 
+template <class T>
+class proto_type :public transit_type
+{
+public:
+	proto_type(virtual_type& _data);
+	proto_type():transit_type(virtual_type(T())){}
+	string encoding() override
+	{
+		return m_data.cast<T>().SerializeAsString();
+	}
+	void decoding(const string& _str) override
+	{
+		T t;
+		t.ParseFromString(_str);
+		m_data.modify(t);
+	}
+};

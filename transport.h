@@ -20,6 +20,8 @@ using std::shared_ptr;
 #include <dirent.h>
 #endif
 /*!
+#include "basic.h"
+#include "basic.h"
  * \class transport
  *
  * \brief 数据传输抽象类。定义数据流动的基本操作。
@@ -61,20 +63,37 @@ public:
 	void set_port(decltype(m_port) _port);
 
 };
+/*!
+ * \class port
+ *
+ * \brief 用在component里，增加了数据传输类型
+ *
+ * \author erow
+ * \date 四月 2016
+ */
+#include "basic.h"
 class port
 {
 public:
-	port(shared_ptr<transport> _transit, int _type);
+	port(shared_ptr<transport> _transit, int _type, shared_ptr<transit_type> _dtype);
 	~port();
 
 	shared_ptr<transport> operator->();
 	int get_type();
+	shared_ptr<transit_type> m_data_type;
 private:
 	int m_type;
 	shared_ptr<transport> m_transitport;
 };
 
-
+/*!
+ * \class transport_net
+ *
+ * \brief transport的基于网络的实现。
+ *
+ * \author erow
+ * \date 四月 2016
+ */
 class transport_net :public transport
 {
 private:
