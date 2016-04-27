@@ -55,6 +55,7 @@ void component::deal_data( )
 			auto data_type = (m_register)[i].m_data_type;
 			data_type->m_data = buff[i];
 			m_register[i]->write(data_type->encoding());
+			m_register[i].m_data_type->m_data.get_type_name();
 		}
 	}
 	

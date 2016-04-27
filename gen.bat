@@ -1,1 +1,1 @@
-protoc --cpp_out=./ proto/request.proto
+protoc --cpp_out=./proto proto/request.proto

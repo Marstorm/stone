@@ -5,20 +5,32 @@
 #include <memory>
 #include <future>
 #include "basic.h"
-class pin
+#include "transport.h"
+#include <map>
+class pin:public transport
 {
 private:
-	virtual_type m_data;
+	static std::map<int, std::string> m_data;
+	std::map<int, std::string>::iterator m_str;
 	int m_writen = 0;
 	std::condition_variable m_data_cond;
 	std::mutex m_mutex;
 public:
 	//void operator&=(pin const&) = default;
-
-	void write(const virtual_type& data);
-	const virtual_type& read();//I want it return virtual_type.But virtual_type has some bug. 
 	pin();
+	pin(int _p) { set_port(_p); }
 	virtual ~pin();
+
+	// return error code ,block mode
+	int read(string& data) override;
+	// return error code ,block mode
+	int write(const string&  data) override;
+	virtual int try_read(string& data);
+	int try_write(const string&  data) override;
+
+
+	// Í¨¹ý transport ¼Ì³Ð
+	virtual void change_port() override;
 };
 
 class pin_array

@@ -3,32 +3,85 @@
 #include <fstream>
 
 using namespace std;
-//阻塞模式：先写后读。如果写完再写需等待读
-void pin::write(const virtual_type & data)
+std::map<int, std::string> pin::m_data;
+pin::pin():transport()
 {
-	std::unique_lock<std::mutex> lk(m_mutex);
-	m_data_cond.wait(lk, [&m = m_writen] {return m == 0; });
-	m_data = data;
-	m_writen = 1;
-	m_data_cond.notify_one();
+	static int _port = 0;
+	while (true)
+	{
+		m_str = m_data.find(++_port);
+		if (m_str == m_data.end())
+		{
+			set_port(_port);
+			break;
+		}
+	}
 	
-}
-//读前等待写
-const virtual_type& pin::read()
-{
-	std::unique_lock<std::mutex> lk(m_mutex);
-	m_data_cond.wait(lk, [&m = m_writen] {return m == 1; });
-	m_writen = 0;
-	m_data_cond.notify_one();
-	return (m_data);
-}
-pin::pin()
-{
 }
 
 
 pin::~pin()
 {
+}
+
+int pin::read(string & data)
+{
+	std::unique_lock<std::mutex> lk(m_mutex);
+	m_data_cond.wait(lk, [&m = m_writen] {return m == 1; });
+	m_writen = 0;
+	data = m_str->second;
+	m_data_cond.notify_one();
+	return 0;
+}
+
+int pin::write(const string & data)
+{
+	std::unique_lock<std::mutex> lk(m_mutex);
+	m_data_cond.wait(lk, [&m = m_writen] {return m == 0; });
+	m_str->second = data;
+	m_writen = 1;
+	m_data_cond.notify_all();
+
+	return 0;
+}
+
+int pin::try_read(string & data)
+{
+	
+	if (m_writen == 1) {
+		data = m_str->second;
+		m_writen = 0;
+		return 0;
+	}
+		
+	
+	return -1;
+}
+
+int pin::try_write(const string & data)
+{
+	if (m_mutex.try_lock())
+	{
+		m_str->second = data;
+		m_writen = 1;
+		m_data_cond.notify_one();
+		return 0;
+	}
+	else
+	{
+		return -1;
+	}
+	
+}
+
+void pin::change_port()
+{
+	m_str = m_data.find(m_port);
+	if (m_str==m_data.end())
+	{
+		m_data[m_port];
+		m_str = m_data.find(m_port);
+	}
 }
 
 

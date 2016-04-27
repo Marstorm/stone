@@ -1,6 +1,6 @@
 /*!
 * \file basic.h
-*
+* \breif 基本数据类型的抽象。virtual_type 万用类型，transit_type 数据传输类型
 * \author erow
 * \date 四月 2016
 *
@@ -185,7 +185,14 @@ private:
 
 };
 
-
+/*!
+ * \class transit_type
+ *
+ * \brief 数据编码，类型验证。用以传输。
+ *
+ * \author erow
+ * \date 四月 2016
+ */
 class transit_type
 {
 public:
@@ -193,6 +200,7 @@ public:
 	~transit_type();
 	virtual string encoding() { return string(); }
 	virtual void decoding(const string& ){}
+	string get_name() { return m_data.get_type_name(); }
 	virtual_type m_data;
 private:
 };
